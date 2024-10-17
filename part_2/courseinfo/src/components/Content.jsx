@@ -2,14 +2,11 @@ import Part from "./Part"
 const Content = ({course}) => {
 
   const total = course.parts.reduce( (accumulator,part) => accumulator + part.exercises, 0 )
-
-    console.log("props de Content",course)
-    return(
+  console.log("props de Content",course)
+  return(
       <>
-        <Part part = {course.parts[0].name} exercise = {course.parts[0].exercises} />
-        <Part part = {course.parts[1].name} exercise = {course.parts[1].exercises} />
-        <Part part = {course.parts[2].name} exercise = {course.parts[2].exercises} />
-        <p>total of {total} </p>
+        {course.parts.map(part => <Part part = {part.name} exercise = {part.exercises} /> )}
+        <p>total of <strong>{total}</strong> exercises </p>
       </>
     )
   }
