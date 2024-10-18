@@ -1,11 +1,24 @@
-const Persons = ({filterPersons}) => {
+import phonebookService from '../services/phonebookService'
+import axios from 'axios'
+
+
+
+const Persons = ({ persons, deleteContact }) => {
     
     return (
         <>
-        {filterPersons.map(person => <p key={person.id}>{person.name} {person.telephone}</p>)}
-        </>
+            {persons.map(person => {
+                return(
+                    <div key={person.id}>
+                        <label>{person.name} : {person.number}</label>
+                        <button onClick={()=>deleteContact(person.id, person.name)}>Delete contact</button>
+                    </div>
+            )
+            })}
+        
+        </> 
     )
-
+       
 }
 
 export default Persons

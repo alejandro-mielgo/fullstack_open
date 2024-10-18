@@ -1,26 +1,33 @@
-import { useState } from 'react'
-
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+ 
 import Search from './components/Search'
 import Form from './components/Form'
 import Persons from './components/Persons'
+import phonebookService from './services/phonebookService'
 
 const App = () => {
 
   //estados
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', telephone: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', telephone: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', telephone: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', telephone: '39-23-6423122', id: 4 }
-  ])
-  const [filterPersons, setFilterPersons] = useState(persons)
+  const [persons, setPersons] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
   const [newName, setNewName] = useState('')
-  const [newTelephone, setNewTelephone] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+ 
+  //hook conseguir datos del servidor
+  const hook = () =>{
+    phonebookService
+      .getContacts()
+      .then( contacts => {
+        setPersons(contacts)
+      })
+  }
+  useEffect(hook,[persons])
 
   //Controladores
   const handleFilter = (event) => {
-    setFilterPersons(persons.filter(person => person.name.toLowerCase().includes(event.target.value.toLowerCase())))
-    console.log(filterPersons)
+    setSearchTerm(event.target.value)
+    console.log(searchTerm) //este va con retrasito
   }
   
   const handleNameInput = (event) => {
@@ -28,21 +35,46 @@ const App = () => {
   }
 
   const handleTelephoneInput = (event) => {
-      setNewTelephone (event.target.value)
+    setNewNumber (event.target.value)
   }
 
   const handleSubmit = (event) => {
-    event.preventDefault()
-    const repeatedPersons = persons.filter(person => person.name===newName)
-    const  newPerson = { name : newName, telephone : newTelephone, id : persons.length+1 }
 
-    if(repeatedPersons.length !== 0) {
-      window.alert(`${newName} is already added to phonebook`)
+    event.preventDefault()
+    const  newPerson = { name : newName, number : newNumber }
+
+    if(persons.some(person => person.name===newName)) {
+      //recuperar contacto de la lista para conseguir el id existente
+      const updatedContact = persons.filter(person => person.name===newName)[0] //devuelve un array, me quedo con el primero
+      updatedContact.number = newNumber
+      console.log(updatedContact)
+      
+      if(window.confirm(`${newName} is already added to phonebook, replace old nuber with a new one?`)) {
+        phonebookService
+          .updateNumber(updatedContact)
+          .then(updatedNumber=>console.log(updatedNumber))
+      }
+      
     } else {
-      setPersons( persons.concat( newPerson ) )
-      setFilterPersons(filterPersons.concat(newPerson))
-    }  
+
+      phonebookService
+        .addContact(newPerson)
+        .then(response => setPersons(persons.concat(response)))
+    }
+  }
+
+  const handleDeleteContact = (id, name) => {
+
+    if(window.confirm(`Do you want to remove ${name} from the agenda`)){
+      phonebookService
+        .deleteContact(id)
+        .then(contactoEliminado => {
+        console.log("eliminado",contactoEliminado)
+      })
+    }
+  
 }
+
 
   return (
     <>
@@ -56,7 +88,10 @@ const App = () => {
         </div>
           <h2>Numbers</h2>
         <div>
-        <Persons filterPersons = {filterPersons} />
+        <Persons 
+          persons = {persons.filter(person => person.name.toLowerCase().includes(searchTerm.toLowerCase()))}
+          deleteContact = {handleDeleteContact}
+        />
       </div>
     </>
   )
