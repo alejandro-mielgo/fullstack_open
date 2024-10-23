@@ -105,8 +105,8 @@ const App = () => {
 
 
   return (
-    <>
-      <div>
+    <div className='m-5'>
+      <div >
         <h2>Phonebook</h2>
         <div>
             <Search handler = {handleFilter} />
@@ -122,7 +122,7 @@ const App = () => {
           deleteContact = {handleDeleteContact}
         />
       </div>
-    </>
+    </div>
   )
 }
 

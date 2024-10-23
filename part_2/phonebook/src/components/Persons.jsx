@@ -11,7 +11,7 @@ const Persons = ({ persons, deleteContact }) => {
                 return(
                     <div key={person.id}>
                         <label>{person.name} : {person.number}</label>
-                        <button onClick={()=>deleteContact(person.id, person.name)}>Delete contact</button>
+                        <button className=" btn btn-light mx-3"onClick={()=>deleteContact(person.id, person.name)}>Delete contact</button>
                     </div>
             )
             })}
