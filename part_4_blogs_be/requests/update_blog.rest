@@ -1,0 +1,19 @@
+PUT http://localhost:3003/api/blogs/672b826578db4af6e2ca97ad HTTP/1.1
+content-type: application/json
+
+{   
+    "title": "me voy para alla",
+    "author": "PechitosMcTetis",
+    "url":"http://ajarenauer.com/blogs",
+    "likes": 40
+}
+###
+PUT http://localhost:3003/api/blogs/672b826578db4afad HTTP/1.1
+content-type: application/json
+
+{   
+    "title": "me voy para alla",
+    "author": "PechitosMcTetis",
+    "url":"http://ajarenauer.com/blogs",
+    "likes": 40
+}
